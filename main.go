@@ -1,16 +1,22 @@
 package main
 
 import (
+	"bufio"
 	"encoding/json"
 	"fmt"
 	"io"
 	"os"
+	"strings"
 
 	task "github.com/julianNot/go-cli/tasks"
 )
 
+func instructions() {
+	fmt.Println("Use: go-clid-crud [ list|add|complete|delete ]")
+}
+
 func main() {
-	file, err := os.OpenFile("tasks.json", os.O_RDWR, 0666)
+	file, err := os.OpenFile("tasks.json", os.O_RDWR|os.O_CREATE, 0666)
 	if err != nil {
 		panic(err)
 	}
@@ -18,7 +24,7 @@ func main() {
 	defer file.Close()
 
 	var tasks []task.Task
-	
+
 	info, err := file.Stat()
 	if err != nil {
 		panic(err)
@@ -31,10 +37,26 @@ func main() {
 		}
 
 		err = json.Unmarshal(bytes, &tasks)
-	}	else {
+	} else {
 		tasks = []task.Task{}
 	}
 
-	fmt.Println(tasks)
+	if len(os.Args) < 2 {
+		instructions()
+	}
+
+	switch os.Args[1] {
+	case "list":
+		task.ListTasks(tasks)
+	case "add":
+		reader := bufio.NewReader(os.Stdin)
+		fmt.Println("What is your Task?")
+		name, _ := reader.ReadString('\n')
+		name = strings.TrimSpace(name)
+
+		tasks = task.Add(tasks, name)
+		task.SaveTask(file, tasks)
+		fmt.Println(tasks)
+	}
 
 }
