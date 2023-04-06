@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"strconv"
 	"strings"
 
 	task "github.com/julianNot/go-cli/tasks"
@@ -57,6 +58,17 @@ func main() {
 		tasks = task.Add(tasks, name)
 		task.SaveTask(file, tasks)
 		fmt.Println(tasks)
+	case "delete":
+		if len(os.Args) < 3 {
+			fmt.Println("Enter [id] to delete")
+			return
+		}
+		id, err := strconv.Atoi(os.Args[2])
+		if err != nil {
+			fmt.Println("Id must be a number")
+		}
+		tasks = task.Delete(tasks, id)
+		task.SaveTask(file, tasks)
 	}
 
 }

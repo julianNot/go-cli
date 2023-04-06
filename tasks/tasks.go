@@ -38,6 +38,15 @@ func Add(tasks []Task, name string) []Task {
 	return append(tasks, newTask)
 }
 
+func Delete(tasks []Task, id int) []Task {
+	for i, task := range tasks {
+		if task.ID == id {
+			return append(tasks[:i], tasks[i+1:]...)
+		}
+	}
+	return tasks
+}
+
 func SaveTask(file *os.File, tasks []Task) {
 	bytes, err := json.Marshal(tasks)
 	if err != nil {
