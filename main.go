@@ -44,6 +44,7 @@ func main() {
 
 	if len(os.Args) < 2 {
 		instructions()
+		return
 	}
 
 	switch os.Args[1] {
@@ -69,6 +70,19 @@ func main() {
 		}
 		tasks = task.Delete(tasks, id)
 		task.SaveTask(file, tasks)
+	case "complete":
+		if len(os.Args) < 3 {
+			fmt.Println("Enter [id] to Complete")
+			return
+		}
+		id, err := strconv.Atoi(os.Args[2])
+		if err != nil {
+			fmt.Println("Id must be a number")
+		}
+		tasks = task.Complete(tasks, id)
+		task.SaveTask(file, tasks)
+	default:
+		instructions()
 	}
 
 }
